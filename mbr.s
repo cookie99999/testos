@@ -3,32 +3,42 @@
 
 	KERNEL_OFFSET equ 0x1000
 
+	jmp start
+
+	%include "print.s"
+	%include "disk.s"
+	%include "gdt.s"
+	%include "switch-32.s"
+
+	bits 16
+start:	
 	xor ax, ax
 	mov ds, ax
 	mov es, ax
 	mov ss, ax
+	mov sp, 0x9000
+	mov bp, sp
 
 	mov [BOOT_DRIVE], dl
-	
-	mov bp, 0x9000
-	mov sp, bp
 
 	call load_kernel
 	call switch_32
 
 	jmp $
 
-	%include "disk.s"
-	%include "gdt.s"
-	%include "switch-32.s"
-
-	bits 16
 load_kernel:
-	mov bx, KERNEL_OFFSET	;dest
-	mov dh, 2		;num sectors
 	mov dl, [BOOT_DRIVE]	;drive
+	mov si, dap
 	call disk_load
 	ret
+
+	align 4
+dap:
+	db 16			;packet size
+	db 0			;reserved
+	dw 2			;num sectors
+	dd 0000.1000		;buffer
+	dq 1			;lba
 
 	bits 32
 BEGIN_32BIT:

@@ -13,9 +13,8 @@ disk_load:
 	pusha
 
 	mov al, dl
-	mov ah, 0x0e
-	mov bh, 0x00
-	int 0x10 		;todo: hex print function
+	call print_hex
+	call newline
 
 	mov ah, 0x42
 	int 0x13
@@ -25,13 +24,26 @@ disk_load:
 	ret
 
 disk_error:
+	push si
+	mov si, disk_err_str
+	call puts
 	mov al, ah
-	mov ah, 0x0e
-	mov bh, 0x00
-	int 0x10
+	call print_hex
+	call newline
 
+	mov si, read_str
+	call puts
+	pop si
 	mov word cx, [ds:si + 2]
+	mov al, ch
+	call print_hex
+	mov al, cl
+	call print_hex
+	call newline
 
 	mov al, 'X'
 	int 0x10
 	jmp $
+
+disk_err_str:	db "Disk error: ",0
+read_str:	db "Sectors read: ",0
