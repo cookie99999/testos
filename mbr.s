@@ -37,7 +37,8 @@ dap:
 	db 16			;packet size
 	db 0			;reserved
 	dw 1			;num sectors
-	dd 0000.1000		;buffer
+	dw KERNEL_OFFSET	;buffer
+	dw 0x0000		;buffer segment
 	dq 1			;lba
 
 	bits 32
