@@ -1,9 +1,4 @@
-putchar: 			;al = char
-	pusha
-	mov ah, 0x0e
-	int 0x10
-	popa
-	ret
+	VRAM equ 0xb8000
 
 puts: 				;ds:si = string
 	pusha
@@ -53,3 +48,27 @@ print_hex: 			;al = hex byte
 .end:
 	popa
 	ret
+
+	bits 32
+
+puts_32:			;ebx = string pointer
+	pusha
+	mov edx, VRAM
+
+.loop:
+	mov al, [ebx]
+	mov ah, 0x0f
+	mov [edx], ax
+
+	cmp al, 0
+	je .end
+
+	add ebx, 1
+	add edx, 2
+	jmp .loop
+
+.end:
+	popa
+	ret
+
+	bits 16
