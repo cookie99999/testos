@@ -3,7 +3,7 @@ switch_32:
 	cli
 	lgdt [gdt_descriptor]
 	mov eax, cr0
-	or eax, 0x1		;protected mode enable
+	or al, 1		;protected mode enable
 	mov cr0, eax
 	jmp CODE_SEG:init_32
 
