@@ -1,9 +1,9 @@
 HEADERS = $(wildcard *.h drivers/*.h)
-OBJ = $(wildcard *.o drivers/*.o)
+SOURCE = $(wildcard *.c drivers/*.c)
+OBJ = $(patsubst %.c,%.o,${SOURCE})
 
 CC = i386-elf-gcc
-CFLAGS = -std=c17 -g3 -O0 -Wall -Wextra -Wpedantic -Wconversion -Wstrict-prototypes
-all: testos.bin
+CFLAGS = -std=c17 -g3 -Og -Wall -Wextra -Wpedantic -Wconversion -Wstrict-prototypes
 
 testos.bin: mbr.bin kernel.bin
 	cat $^ > $@
@@ -12,7 +12,7 @@ kernel.bin: kernel-entry.o ${OBJ}
 	i386-elf-ld -o $@ -T linker.ld $^ --oformat binary
 
 kernel.elf: kernel-entry.o ${OBJ}
-	i386-elf-ld -o $@ -T linker.ld $^
+	i386-elf-ld -o $@ -T linker.ld $^ --oformat elf32-i386
 
 %.o: %.c ${HEADERS}
 	${CC} ${CFLAGS} -ffreestanding -c $< -o $@
@@ -22,6 +22,9 @@ kernel.elf: kernel-entry.o ${OBJ}
 
 %.bin: %.s
 	nasm $< -f bin -o $@
+
+debug: testos.bin kernel.elf
+	qemu-system-i386 -s -S -no-reboot -drive format=raw,media=disk,file=testos.bin & gdb -ex "target remote localhost:1234" -ex "symbol-file kernel.elf"
 
 clean:
 	$(RM) *.bin *.o *.dis *.elf
