@@ -2,4 +2,8 @@
 *#
 *.o
 *.bin
+*.elf
+*.img
+*.bak
+*.lock
 crosstools/
