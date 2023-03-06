@@ -1,27 +1,42 @@
+#include <stdint.h>
+
+#include "ports.h"
 #include "vga.h"
 
-unsigned char port_byte_in(unsigned short port) {
-  unsigned char result;
-  __asm__("in %%dx, %%al" : "=a" (result) : "d" (port));
+/* VGA port IO wrappers */
+
+static void vga_outb(uint8_t reg, uint8_t data) {
+  outb(VGA_CTRL_REG, reg);
+  outb(VGA_DATA_REG, data);
+}
+
+static void vga_outw(uint8_t reg, uint16_t data) {
+  outb(VGA_CTRL_REG, reg);
+  outb(VGA_DATA_REG, (uint8_t)((data >> 8) & 0x00ff));
+  outb(VGA_CTRL_REG, reg + 1);
+  outb(VGA_DATA_REG, (uint8_t)(data & 0x00ff));
+}
+
+static uint8_t vga_inb(uint8_t reg) {
+  uint8_t result;
+  outb(VGA_CTRL_REG, reg);
+  result = inb(VGA_DATA_REG);
   return result;
 }
 
-void port_byte_out(unsigned short port, unsigned char data) {
-  __asm__("out %%al, %%dx" : : "a" (data), "d" (port));
+static uint16_t vga_inw(uint8_t reg) {
+  uint16_t result;
+  outb(VGA_CTRL_REG, reg);
+  result = inb(VGA_DATA_REG) << 8;
+  outb(VGA_CTRL_REG, reg + 1);
+  result |= inb(VGA_DATA_REG);
+  return result;
+}
+  
+void set_cursor_pos(uint16_t offs) {
+  vga_outw(VGA_CURSOR_POS, offs / 2); //2 bytes per character
 }
 
-void set_cursor(int offs) {
-  offs /= 2;
-  port_byte_out(VGA_CTRL_REG, VGA_OFFS_HIGH);
-  port_byte_out(VGA_DATA_REG, (unsigned char) (offs >> 8));
-  port_byte_out(VGA_CTRL_REG, VGA_OFFS_LOW);
-  port_byte_out(VGA_DATA_REG, (unsigned char) (offs & 0xff));
-}
-
-int get_cursor() {
-  port_byte_out(VGA_CTRL_REG, VGA_OFFS_HIGH);
-  int offs = port_byte_in(VGA_DATA_REG) << 8;
-  port_byte_out(VGA_CTRL_REG, VGA_OFFS_LOW);
-  offs += port_byte_in(VGA_DATA_REG);
-  return offs * 2;
+uint16_t get_cursor_pos() {
+  return vga_inw(VGA_CURSOR_POS) * 2; //2 bytes per character
 }
