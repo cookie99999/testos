@@ -236,4 +236,19 @@ void vga_write_regs(uint8_t* regbuf) {
   inb(VGA_INSTAT_READ);
   outb(VGA_AC_WRITE, 0x20);
 }
+
+/* mode 0x13 functions */
+
+void set_pixel(int x, int y, uint8_t color) {
+  uint8_t* screen = (uint8_t*)0xa0000;
+
+  screen[y * 320 + x] = color;
+}
+
+void clear_screen_13() {
+  uint8_t* screen = (uint8_t*)0xa0000;
+
+  for (int i = 0; i < 320 * 200; i++) {
+    *screen++ = 0;
+  }
 }

@@ -42,3 +42,6 @@ void kprint(char* string);
 
 void vga_save_regs(uint8_t* regbuf);
 void vga_write_regs(uint8_t* regbuf);
+
+void set_pixel(int x, int y, uint8_t color);
+void clear_screen_13(void);
