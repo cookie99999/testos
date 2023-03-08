@@ -1,4 +1,5 @@
 #include "drivers/vga.h"
+#include "arch/x86/interrupts.h"
 
 void draw_mandel(int w, int h, int iter_max, double zoom, double fx, double fy) {
   for (int y = 0; y < h; y++) {
@@ -38,10 +39,9 @@ void main(void) {
   kprint_at("third row", 0, 2);
   kprint_at("fourth row", 0, 3);
 
-  vga_write_regs(g320x200x256);
-  clear_screen_13();
-
-  draw_mandel(320, 200, 32, 10000, 0.001643721971153, 0.822467633298876);
+  setup_idt();
+  __asm__ volatile("int $3");
+  __asm__ volatile("int $10");
 
   while (1)
     ;
