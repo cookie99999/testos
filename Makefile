@@ -1,6 +1,6 @@
-HEADERS = $(wildcard *.h drivers/*.h)
-SOURCE = $(wildcard *.c drivers/*.c)
-OBJ = $(patsubst %.c,%.o,${SOURCE})
+HEADERS = $(wildcard *.h drivers/*.h arch/*/*.h)
+SOURCE = $(wildcard *.c drivers/*.c arch/*/*.c)
+OBJ = $(patsubst %.c,%.o,${SOURCE} arch/x86/isr_wrapper.o)
 
 CC = i386-elf-gcc
 CFLAGS = -std=c17 -g3 -Og -Wall -Wextra -Wpedantic -Wconversion -Wstrict-prototypes
