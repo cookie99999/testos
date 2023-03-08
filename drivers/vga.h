@@ -1,3 +1,6 @@
+#ifndef VGA_H
+#define VGA_H
+
 #include <stdint.h>
 
 #define VGA_VRAM 0xb8000
@@ -39,9 +42,11 @@ extern uint8_t g80x25_text[VGA_NUM_TOTAL];
 void clear_screen_text(void);
 void kprint_at(char* string, int x, int y);
 void kprint(char* string);
+void kitoa(int n, char* s);
 
 void vga_save_regs(uint8_t* regbuf);
 void vga_write_regs(uint8_t* regbuf);
 
 void set_pixel(int x, int y, uint8_t color);
 void clear_screen_13(void);
+#endif
