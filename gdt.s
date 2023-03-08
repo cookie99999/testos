@@ -1,5 +1,5 @@
 gdt_start:
-	dq 0x00
+	dq 0x00			;null entry required
 
 gdt_code:
 	dw 0xffff		;length
