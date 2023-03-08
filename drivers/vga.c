@@ -171,6 +171,21 @@ void kprint(char* string) {
   kprint_at(string, -1, -1);
 }
 
+void kitoa(int n, char* s) {
+  int i = 0;
+  //find highest divisor
+  int d = 10;
+  while ((n / d) > 10) {
+    d *= 10;
+  }
+  
+  do {
+    s[i++] = ((n / d) % 10) + '0';
+  } while ((d /= 10) > 1);
+
+  s[i] = '\0';
+}
+
 /* modesetting functions */
 
 void vga_save_regs(uint8_t* regbuf) {
