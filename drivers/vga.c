@@ -181,7 +181,7 @@ void kitoa(int n, char* s) {
   
   do {
     s[i++] = ((n / d) % 10) + '0';
-  } while ((d /= 10) > 1);
+  } while ((d /= 10) > 0);
 
   s[i] = '\0';
 }
