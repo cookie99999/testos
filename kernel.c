@@ -41,7 +41,7 @@ void main(void) {
 
   setup_idt();
   __asm__ volatile("int $3");
-  __asm__ volatile("int $10");
+  __asm__ volatile("int $16");
 
   while (1)
     ;
