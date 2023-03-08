@@ -26,9 +26,6 @@ kernel.elf: kernel-entry.o ${OBJ}
 debug: testos.bin kernel.elf
 	qemu-system-i386 -s -S -no-reboot -drive format=raw,media=disk,file=testos.bin & gdb -ex "target remote localhost:1234" -ex "symbol-file kernel.elf"
 
-debug:
-	i386-elf-ld -o kernel.elf -T linker.ld kernel-entry.o kernel.o --oformat elf32-i386
-
 clean:
 	$(RM) *.bin *.o *.dis *.elf
 	$(RM) drivers/*.o
