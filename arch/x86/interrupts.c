@@ -53,6 +53,25 @@ void setup_idt() {
   set_idt_entry(30, (uint32_t)isr30);
   set_idt_entry(31, (uint32_t)isr31);
 
+  remap_pics(0x20, 0x28);
+
+  set_idt_entry(32, (uint32_t)irq0);
+  set_idt_entry(33, (uint32_t)irq1);
+  set_idt_entry(34, (uint32_t)irq2);
+  set_idt_entry(35, (uint32_t)irq3);
+  set_idt_entry(36, (uint32_t)irq4);
+  set_idt_entry(37, (uint32_t)irq5);
+  set_idt_entry(38, (uint32_t)irq6);
+  set_idt_entry(39, (uint32_t)irq7);
+  set_idt_entry(40, (uint32_t)irq8);
+  set_idt_entry(41, (uint32_t)irq9);
+  set_idt_entry(42, (uint32_t)irq10);
+  set_idt_entry(43, (uint32_t)irq11);
+  set_idt_entry(44, (uint32_t)irq12);
+  set_idt_entry(45, (uint32_t)irq13);
+  set_idt_entry(46, (uint32_t)irq14);
+  set_idt_entry(47, (uint32_t)irq15);
+
   load_idtr();
 }
 
@@ -64,6 +83,13 @@ void default_exception_handler(intr_stack_t* is) {
   kprint(s);
   kprint("\n");
 }
+
+/* irq0-15 */
+void default_irq_handler(intr_stack_t* is) {
+  kprint("IRQ received: ");
+  char s[3];
+  kitoa(is->num - 0x20, s);
   kprint(s);
   kprint("\n");
+  send_eoi(is->num);
 }

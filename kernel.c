@@ -1,5 +1,6 @@
 #include "drivers/vga.h"
 #include "arch/x86/interrupts.h"
+#include "arch/x86/pic.h"
 
 void draw_mandel(int w, int h, int iter_max, double zoom, double fx, double fy) {
   for (int y = 0; y < h; y++) {
@@ -42,6 +43,9 @@ void kmain(void) {
   setup_idt();
   __asm__ volatile("int $3");
   __asm__ volatile("int $16");
+  pic_primary_set_masks(0xf9);
+  pic_secondary_set_masks(0xef);
+  __asm__("sti");
 
   while (1)
     ;

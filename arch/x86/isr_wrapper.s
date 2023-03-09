@@ -1,4 +1,5 @@
 	extern default_exception_handler
+	extern default_irq_handler
 
 isr_wrapper:
 	;; pass state on stack for handler
@@ -23,6 +24,30 @@ isr_wrapper:
 	mov gs, ax
 	popa
 	add esp, 8		;pop off error code and int num
+	iret
+
+irq_wrapper:
+	pusha
+	mov ax, ds
+	push eax
+	mov ax, 0x10		;kernel data seg
+	mov ds, ax
+	mov es, ax
+	mov fs, ax
+	mov gs, ax
+	push esp
+
+	cld
+	call default_irq_handler
+
+	pop ebx			;why does it use ebx?
+	pop ebx
+	mov ds, bx
+	mov es, bx
+	mov fs, bx
+	mov gs, bx
+	popa
+	add esp, 8
 	iret
 
 	;; cpu exceptions
@@ -211,3 +236,101 @@ isr31:				;reserved
 	push byte 0
 	push byte 31
 	jmp isr_wrapper
+
+	;; hardware irqs
+	global irq0
+	global irq1
+	global irq2
+	global irq3
+	global irq4
+	global irq5
+	global irq6
+	global irq7
+	global irq8
+	global irq9
+	global irq10
+	global irq11
+	global irq12
+	global irq13
+	global irq14
+	global irq15
+
+irq0:
+	push byte 0
+	push byte 32
+	jmp irq_wrapper
+
+irq1:
+	push byte 0
+	push byte 33
+	jmp irq_wrapper
+
+irq2:
+	push byte 0
+	push byte 34
+	jmp irq_wrapper
+
+irq3:
+	push byte 0
+	push byte 35
+	jmp irq_wrapper
+
+irq4:
+	push byte 0
+	push byte 36
+	jmp irq_wrapper
+
+irq5:
+	push byte 0
+	push byte 37
+	jmp irq_wrapper
+
+irq6:
+	push byte 0
+	push byte 38
+	jmp irq_wrapper
+
+irq7:
+	push byte 0
+	push byte 39
+	jmp irq_wrapper
+
+irq8:
+	push byte 0
+	push byte 40
+	jmp irq_wrapper
+
+irq9:
+	push byte 0
+	push byte 41
+	jmp irq_wrapper
+
+irq10:
+	push byte 0
+	push byte 42
+	jmp irq_wrapper
+
+irq11:
+	push byte 0
+	push byte 43
+	jmp irq_wrapper
+
+irq12:
+	push byte 0
+	push byte 44
+	jmp irq_wrapper
+
+irq13:
+	push byte 0
+	push byte 45
+	jmp irq_wrapper
+
+irq14:
+	push byte 0
+	push byte 46
+	jmp irq_wrapper
+
+irq15:
+	push byte 0
+	push byte 47
+	jmp irq_wrapper

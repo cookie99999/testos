@@ -36,7 +36,7 @@ load_kernel:
 dap:
 	db 16			;packet size
 	db 0			;reserved
-	dw 7			;num sectors
+	dw 8			;num sectors
 	dw KERNEL_OFFSET	;buffer
 	dw 0x0000		;buffer segment
 	dq 1			;lba
