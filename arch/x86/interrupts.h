@@ -27,8 +27,8 @@ typedef struct {
 } __attribute__((packed)) idtr_t;
 
 typedef struct {
-  uint32_t ds, edi, esi, ebp, esp, ebx, edx, ecx, eax,
-    num, error, eip, cs, eflags, useresp, ss;
+  uint32_t ds, edi, esi, ebp, oldesp, ebx, edx, ecx, eax,
+    num, error, eip, cs, eflags, esp, ss;
 } intr_stack_t;
 
 extern idt_entry_t idt[IDT_NUM_ENTRIES];
@@ -37,7 +37,7 @@ extern idtr_t idtr;
 void set_idt_entry(int n, uint32_t handler);
 void load_idtr(void);
 void setup_idt(void);
-void default_exception_handler(intr_stack_t is);
+void default_exception_handler(intr_stack_t* is);
 
 extern void isr0(void);
 extern void isr1(void);

@@ -57,10 +57,13 @@ void setup_idt() {
 }
 
 /* x86 exception isrs */
-void default_exception_handler(intr_stack_t is) {
+void default_exception_handler(intr_stack_t* is) {
   kprint("interrupt received: ");
   char s[3];
-  kitoa(is.num, s);
+  kitoa(is->num, s);
+  kprint(s);
+  kprint("\n");
+}
   kprint(s);
   kprint("\n");
 }

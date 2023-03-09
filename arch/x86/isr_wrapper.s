@@ -10,9 +10,12 @@ isr_wrapper:
 	mov es, ax
 	mov fs, ax
 	mov gs, ax
+	push esp		;pointer to the above data (intr_stack_t)
 
+	cld			;sysv abi requires direction flag clear on func entry
 	call default_exception_handler
 
+	pop eax
 	pop eax
 	mov ds, ax
 	mov es, ax
@@ -20,7 +23,6 @@ isr_wrapper:
 	mov gs, ax
 	popa
 	add esp, 8		;pop off error code and int num
-	sti
 	iret
 
 	;; cpu exceptions
@@ -59,185 +61,153 @@ isr_wrapper:
 	global isr31
 
 isr0:				;division error
-	cli
 	push byte 0
 	push byte 0
 	jmp isr_wrapper
 
 isr1:				;debug interrupt
-	cli
 	push byte 0
 	push byte 1
 	jmp isr_wrapper
 
 isr2:				;nmi
-	cli
 	push byte 0
 	push byte 2
 	jmp isr_wrapper
 
 isr3:				;breakpoint
-	cli
 	push byte 0
 	push byte 3
 	jmp isr_wrapper
 
 isr4:				;overflow
-	cli
 	push byte 0
 	push byte 4
 	jmp isr_wrapper
 
 isr5:				;bound range exceeded
-	cli
 	push byte 0
 	push byte 5
 	jmp isr_wrapper
 
 isr6:				;invalid opcode
-	cli
 	push byte 0
 	push byte 6
 	jmp isr_wrapper
 
 isr7:				;device not available
-	cli
 	push byte 0
 	push byte 7
 	jmp isr_wrapper
 	
-isr8:				;double fault
-	cli	
+isr8:				;double fault	
 	push byte 8
 	jmp isr_wrapper
 
 isr9:				;coprocessor segment overrun
-	cli
 	push byte 0
 	push byte 9
 	jmp isr_wrapper
 	
 isr10:				;invalid tss
-	cli
 	push byte 10
 	jmp isr_wrapper
 
 isr11:				;segment not present
-	cli
 	push byte 11
 	jmp isr_wrapper
 
 isr12:				;stack segment fault
-	cli
 	push byte 12
 	jmp isr_wrapper
 
 isr13:				;general protection fault
-	cli
 	push byte 13
 	jmp isr_wrapper
 
 isr14:				;page fault
-	cli
 	push byte 14
 	jmp isr_wrapper
 
 isr15:				;reserved
-	cli
 	push byte 0
 	push byte 15
 	jmp isr_wrapper
 
 isr16:				;floating point exception
-	cli
 	push byte 0
 	push byte 16
 	jmp isr_wrapper
 
 isr17:				;alignment check
-	cli
 	push byte 0
 	push byte 17
 	jmp isr_wrapper
 
 isr18:				;machine check
-	cli
 	push byte 0
 	push byte 18
 	jmp isr_wrapper
 
 isr19:				;reserved
-	cli
 	push byte 0
 	push byte 19
 	jmp isr_wrapper
 
 isr20:				;reserved
-	cli
 	push byte 0
 	push byte 20
 	jmp isr_wrapper
 
 isr21:				;reserved
-	cli
 	push byte 0
 	push byte 21
 	jmp isr_wrapper
 
 isr22:				;reserved
-	cli
 	push byte 0
 	push byte 22
 	jmp isr_wrapper
 
 isr23:				;reserved
-	cli
 	push byte 0
 	push byte 23
 	jmp isr_wrapper
 
 isr24:				;reserved
-	cli
 	push byte 0
 	push byte 24
 	jmp isr_wrapper
 
 isr25:				;reserved
-	cli
 	push byte 0
 	push byte 25
 	jmp isr_wrapper
 
 isr26:				;reserved
-	cli
 	push byte 0
 	push byte 26
 	jmp isr_wrapper
 isr27:				;reserved
-	cli
 	push byte 0
 	push byte 27
 	jmp isr_wrapper
 isr28:				;reserved
-	cli
 	push byte 0
 	push byte 28
 	jmp isr_wrapper
 
 isr29:				;reserved
-	cli
 	push byte 0
 	push byte 29
 	jmp isr_wrapper
 
 isr30:				;reserved
-	cli
 	push byte 0
 	push byte 30
 	jmp isr_wrapper
 
 isr31:				;reserved
-	cli
 	push byte 0
 	push byte 31
 	jmp isr_wrapper
