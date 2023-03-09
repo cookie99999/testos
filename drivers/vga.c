@@ -1,7 +1,7 @@
 #include <stdint.h>
 
-#include "ports.h"
 #include "vga.h"
+#include "../arch/x86/ports.h"
 
 //register arrays public domain by Chris Giese
 uint8_t g320x200x256[] = {
