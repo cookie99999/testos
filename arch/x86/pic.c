@@ -60,3 +60,11 @@ void pic_clear_mask(uint8_t irq) {
   mask = inb(port) & (uint8_t)~(1 << irq);
   outb(port, mask);
 }
+
+void pic_primary_set_masks(uint8_t m) {
+  outb(PIC_PRIMARY_DATA, m);
+}
+
+void pic_secondary_set_masks(uint8_t m) {
+  outb(PIC_SECONDARY_DATA, m);
+}

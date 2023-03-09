@@ -23,3 +23,8 @@
 void remap_pics(uint8_t primary_offs, uint8_t secondary_offs);
 void disable_pics(void);
 void send_eoi(int n);
+void pic_set_mask(uint8_t irq);
+void pic_clear_mask(uint8_t irq);
+void pic_primary_set_masks(uint8_t m);
+void pic_secondary_set_masks(uint8_t m);
+#endif
