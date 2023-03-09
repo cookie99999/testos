@@ -31,7 +31,7 @@ void draw_mandel(int w, int h, int iter_max, double zoom, double fx, double fy) 
   }
 }
 
-void main(void) {
+void kmain(void) {
   clear_screen_text();
   kprint("printing text");
   kprint_at("like a boss\n", 77, 12);
