@@ -1,5 +1,6 @@
 #include "interrupts.h"
 #include "../../drivers/vga.h"
+#include "pic.h"
 
 idt_entry_t idt[IDT_NUM_ENTRIES];
 idtr_t idtr;
@@ -8,7 +9,7 @@ void set_idt_entry(int n, uint32_t handler) {
   idt[n].offs_0 = (uint16_t)(handler & 0x0000ffff);
   idt[n].selector = 0x08; //kernel code segment selector
   idt[n].reserved = 0;
-  idt[n].attributes = IDT_ATTR_INTR_GATE;
+  idt[n].attributes = IDT_ATTR_INTR_GATE | IDT_ATTR_PRESENT;
   idt[n].offs_1 = (uint16_t)((handler & 0xffff0000) >> 16);
 }
 

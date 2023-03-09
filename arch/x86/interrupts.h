@@ -4,8 +4,14 @@
 #include <stdint.h>
 
 #define IDT_NUM_ENTRIES 256
-#define IDT_ATTR_INTR_GATE 0x8e
-#define IDT_ATTR_TRAP_GATE 0x8f
+
+#define IDT_ATTR_PRESENT 0x80
+#define IDT_ATTR_DPL_0 0x00
+#define IDT_ATTR_DPL_1 0x20
+#define IDT_ATTR_DPL_2 0x40
+#define IDT_ATTR_DPL_3 0x60
+#define IDT_ATTR_INTR_GATE 0x0e
+#define IDT_ATTR_TRAP_GATE 0x0f
 
 typedef struct {
   uint16_t offs_0;
