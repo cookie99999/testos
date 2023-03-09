@@ -57,6 +57,6 @@ void pic_clear_mask(uint8_t irq) {
     irq -= 8;
   }
 
-  mask = inb(port) & ~(1 << irq);
+  mask = inb(port) & (uint8_t)~(1 << irq);
   outb(port, mask);
 }
