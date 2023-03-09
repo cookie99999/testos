@@ -1,6 +1,7 @@
 #include <stdint.h>
 
 #include "pic.h"
+#include "ports.h"
 
 void remap_pics(uint8_t primary_offs, uint8_t secondary_offs) {
   uint8_t m1, m2; //mask backup
