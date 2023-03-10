@@ -1,5 +1,6 @@
 	extern default_exception_handler
 	extern default_irq_handler
+	extern irq0_handler
 
 isr_wrapper:
 	;; pass state on stack for handler
@@ -256,9 +257,11 @@ isr31:				;reserved
 	global irq15
 
 irq0:
-	push byte 0
-	push byte 32
-	jmp irq_wrapper
+	pusha
+	cld
+	call irq0_handler
+	popa
+	iret
 
 irq1:
 	push byte 0

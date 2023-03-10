@@ -5,6 +5,8 @@
 idt_entry_t idt[IDT_NUM_ENTRIES];
 idtr_t idtr;
 
+uint64_t ticks = 0;
+
 void set_idt_entry(int n, uint32_t handler) {
   idt[n].offs_0 = (uint16_t)(handler & 0x0000ffff);
   idt[n].selector = 0x08; //kernel code segment selector
@@ -92,4 +94,12 @@ void default_irq_handler(intr_stack_t* is) {
   kprint(s);
   kprint("\n");
   send_eoi(is->num);
+}
+
+void irq0_handler() {
+  ticks++;
+  if (ticks % 100 == 0) {
+    kprint("100th timer tick\n");
+  }
+  send_eoi(0x20);
 }

@@ -1,6 +1,7 @@
 #include "drivers/vga.h"
 #include "arch/x86/interrupts.h"
 #include "arch/x86/pic.h"
+#include "arch/x86/pit.h"
 
 void draw_mandel(int w, int h, int iter_max, double zoom, double fx, double fy) {
   for (int y = 0; y < h; y++) {
@@ -43,8 +44,11 @@ void kmain(void) {
   setup_idt();
   __asm__ volatile("int $3");
   __asm__ volatile("int $16");
-  pic_primary_set_masks(0xf9);
-  pic_secondary_set_masks(0xef);
+  pic_primary_set_masks(0xf8);
+  pic_secondary_set_masks(0xff);
+
+  pit_set_mode(PIT_CMD_CHAN_0 | PIT_CMD_ACC_MODE_LOHI | PIT_CMD_OPMODE_2);
+  pit_set_reload(0, 0);
   __asm__("sti");
 
   while (1)
