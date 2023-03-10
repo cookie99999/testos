@@ -7,6 +7,8 @@ CFLAGS = -std=c17 -g3 -Og -Wall -Wextra -Wpedantic -Wconversion -Wstrict-prototy
 
 testos.bin: mbr.bin kernel.bin
 	cat $^ > $@
+	qemu-img create -f raw hdd.img 20M
+	dd if=testos.bin of=hdd.img bs=512 conv=notrunc
 
 kernel.bin: kernel-entry.o ${OBJ}
 	i386-elf-ld -o $@ -T linker.ld $^ --oformat binary
@@ -24,8 +26,8 @@ kernel.elf: kernel-entry.o ${OBJ}
 	nasm $< -f bin -o $@
 
 debug: testos.bin kernel.elf
-	qemu-system-i386 -s -S -no-reboot -drive format=raw,media=disk,file=testos.bin & gdb -ex "target remote localhost:1234" -ex "symbol-file kernel.elf"
+	qemu-system-i386 -s -S -no-reboot -drive format=raw,media=disk,file=hdd.img & gdb -ex "target remote localhost:1234" -ex "symbol-file kernel.elf"
 
 clean:
-	$(RM) *.bin *.o *.dis *.elf
-	$(RM) drivers/*.o
+	$(RM) *.bin *.o *.dis *.elf *.img
+	$(RM) drivers/*.o arch/*/*.o
