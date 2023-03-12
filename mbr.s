@@ -1,52 +1,70 @@
 	bits 16
-	org 0x7c00
+	dap equ 0x600
+	BOOT_DRIVE equ 0x800
+	fat_offset equ 0x802
+	data_offset equ 0x804
+	fat_buffer equ 0x900
+	dir_buffer equ 0xa00
+	stage2_entry equ 0x8000
 
-	KERNEL_OFFSET equ 0x1000
-
-	jmp start
-
-	%include "print.s"
-	%include "disk.s"
-	%include "gdt.s"
-	%include "switch-32.s"
-
-	bits 16
-start:	
-	xor ax, ax
+	org 0x7c5a
+	
+	sectors_per_cluster equ 0x7c0d
+	reserved_sectors equ 0x7c0e
+	num_fats equ 0x7c10
+	sectors_per_fat equ 0x7c24
+	root_dir_start equ 0x7c2c	;cluster number of root directory
+start:
+	cli
+	cld
+	jmp 0x0000:.fix_cs
+.fix_cs:
+	xor eax, eax
 	mov ds, ax
 	mov es, ax
 	mov ss, ax
-	mov sp, 0x9000
+	mov sp, 0x7c00
 	mov bp, sp
-
+	sti
+	mov ebx, eax
+	
 	mov [BOOT_DRIVE], dl
 
-	call load_kernel
-	call switch_32
+	mov eax, [sectors_per_fat]
+	mul byte [num_fats]
+	mov bx, word [reserved_sectors]
+	add eax, ebx
+	mov dword [data_offset], eax
 
-	jmp $
+	mov [dap], byte 0x10	;packet size
+	mov [dap+1], byte 0	;reserved
+	mov ax, 2 ;todo: assuming stage2 will be found within first 2 sectors
+	mov [dap+2], ax		;probably fine for a small partition though
+	xor eax, eax
+	mov ax, fat_buffer
+	mov [dap+4], eax	;transfer buffer
+	mov ax, word [reserved_sectors]
+	mov [fat_offset], ax
+	mov [dap+8], eax	;lower lba
+	mov [dap+12], dword 0	;upper lba
 
-load_kernel:
-	mov dl, [BOOT_DRIVE]	;drive
 	mov si, dap
-	call disk_load
-	ret
+	mov ah, 0x42
+	int 0x13		;beginning of fat loaded to memory
+	jc error
 
-	align 4
-dap:
-	db 16			;packet size
-	db 0			;reserved
-	dw 20			;num sectors
-	dw KERNEL_OFFSET	;buffer
-	dw 0x0000		;buffer segment
-	dq 1			;lba
+	xor eax, eax
+	mov eax, dword [root_dir_start]
+	sub eax, 2		;2 reserved clusters in fat
+	mul byte [sectors_per_cluster]
+	jc error
+	add eax, dword [data_offset] ;eax now has lba of given cluster
 
-	bits 32
-BEGIN_32BIT:
-	call KERNEL_OFFSET
-	jmp $
-
-	BOOT_DRIVE db 0
 	
-	times 510-($-$$) db 0
-	dw 0xaa55
+
+error:
+	mov ah, 0x0e
+	mov al, 'X'
+	int 0x10
+	cli
+	hlt
