@@ -21,12 +21,15 @@ boot.o: arch/x86/boot.s
 %.o: %.s
 	nasm $< -felf32 -o $@
 
+run: testos.bin
+	@qemu-system-i386 -no-reboot -m 32 -cdrom testos.iso
+
 debug: testos.bin
-	@qemu-system-i386 -s -S -no-reboot -cdrom testos.iso & gdb -ex "target remote localhost:1234" -ex "symbol-file testos.bin"
+	@qemu-system-i386 -s -S -no-reboot -m 32 -cdrom testos.iso & gdb -ex "target remote localhost:1234" -ex "symbol-file testos.bin"
 
 clean:
 	-@rm -f *.bin *.o *.dis *.elf *.iso
 	-@rm -f drivers/*.o arch/*/*.o
 	-@rm -rf iso/
 
-.PHONY: all clean dist
+.PHONY: all clean run dist
