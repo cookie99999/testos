@@ -3,6 +3,7 @@
 #include "arch/x86/interrupts.h"
 #include "arch/x86/pic.h"
 #include "arch/x86/pit.h"
+#include "arch/x86/multiboot.h"
 
 void draw_mandel(int w, int h, int iter_max, double zoom, double fx, double fy) {
   for (int y = 0; y < h; y++) {
@@ -34,17 +35,86 @@ void draw_mandel(int w, int h, int iter_max, double zoom, double fx, double fy) 
   }
 }
 
-void kmain(void) {
+void kitoa_hex(uint64_t n, char* s) {
+  int j = 0;
+  s[j++] = '0';
+  s[j++] = 'x';
+  for (int i = 60; i >=0; i -= 4) {
+    int nyb = ((n >> i) & 0xf);
+    if (nyb  > 9) {
+      s[j] = (char)(nyb - 10) + 'a';
+    } else {
+      s[j] = (char)nyb + '0';
+    }
+    j++;
+  }
+  s[j] = '\0';
+}
+
+void parse_mmap(multiboot_info_t* mbd) {
+  int num_maps = mbd->mmap_length / sizeof(multiboot_memory_map_t);
+  kprint("maps: ");
+  char s[6];
+  kitoa(num_maps, s);
+  kprint(s);
+  kprint("\n");
+
+  int i = 0;
+  while (i < mbd->mmap_length) {
+    multiboot_memory_map_t* mmap = (multiboot_memory_map_t*)(mbd->mmap_addr + i);
+    kprint("type: ");
+    kitoa(mmap->type, s);
+    kprint(s);
+    kprint("   ");
+
+    kprint("start: ");
+    char x[11];
+    kitoa_hex(mmap->addr, x);
+    kprint(x);
+    kprint("   ");
+
+    kprint("length: ");
+    kitoa_hex(mmap->len, x);
+    kprint(x);
+    kprint("\n");
+    i += mmap->size + 4; //size leaves out itself
+  }
+}
+
+void kmain(multiboot_info_t* mbd, uint32_t magic) {
+  if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
+    kprint("PANIC: wrong magic number\n");
+    char s[6];
+    kitoa(magic, s);
+    kprint(s);
+    __asm__("cli");
+    __asm__("hlt");
+  }
+  
   clear_screen_text();
-  kprint("printing text");
-  kprint_at("like a boss\n", 77, 12);
-  kprint_at("second row", 0, 1);
-  kprint_at("third row", 0, 2);
-  kprint_at("fourth row", 0, 3);
+  if (mbd->flags & 1) {
+    kprint("mem_lower and mem_upper valid\n");
+    kprint("mem_lower: ");
+    char s[6];
+    kitoa(mbd->mem_lower, s);
+    kprint(s);
+    kprint("\n");
+    kprint("mem_upper: ");
+    kitoa(mbd->mem_upper, s);
+    kprint(s);
+    kprint("\n");
+  } else {
+    kprint("mem_lower and mem_upper not valid\n");
+  }
+
+  if (mbd->flags & (1 << 6)) {
+    kprint("mmap fields valid\n");
+    parse_mmap(mbd);
+  } else {
+    kprint("mmap fields invalid\n");
+  }
 
   setup_idt();
-  __asm__ volatile("int $3");
-  __asm__ volatile("int $16");
   pic_primary_set_masks(0xf8);
   pic_secondary_set_masks(0xff);
 
