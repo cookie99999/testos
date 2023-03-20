@@ -1,4 +1,5 @@
 #include "drivers/vga.h"
+#include "arch/x86/mmu.h"
 #include "arch/x86/interrupts.h"
 #include "arch/x86/pic.h"
 #include "arch/x86/pit.h"
@@ -54,3 +55,8 @@ void kmain(void) {
   while (1)
     ;
 }
+
+__attribute__((__aligned__(PGSIZE))) pde_t boot_pagedir[NUM_PDE] = {
+  [0] = (0) | PTE_P | PTE_W | PTE_PS,
+  [0xc0000000 >> 22] = (0) | PTE_P | PTE_W | PTE_PS
+};
