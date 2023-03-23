@@ -34,7 +34,7 @@ _start:
 	ljmp $CODE_SEG, $.jump
 .jump:
 	movl %eax, %ecx		#save magic
-	movw DATA_SEG, %ax
+	movw $DATA_SEG, %ax
 	movw %ax, %ds
 	movw %ax, %es
 	movw %ax, %fs
@@ -45,10 +45,10 @@ _start:
 	movl $(boot_pagedir - 0xc0000000), %eax
 	movl %eax, %cr3
 	movl %cr4, %eax
-	orl CR4_PSE, %eax
+	orl $CR4_PSE, %eax
 	movl %eax, %cr4
 	movl %cr0, %eax
-	orl CR0_PG | CR0_WP, %eax
+	orl $(CR0_PG | CR0_WP), %eax
 	movl %eax, %cr0
 
 	lea high, %eax
