@@ -21,9 +21,9 @@ stack_top:
 
 .section .bss, "aw", @nobits
 .align 4096
-boot_pagedir:
+boot_pagedir_space:
 	.skip 4096
-boot_pagetable:
+boot_pagetable_space:
 	.skip 4096
 
 .section .multiboot.text, "a"
