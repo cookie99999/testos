@@ -3,6 +3,7 @@ SOURCE := $(wildcard *.c drivers/*.c arch/*/*.c)
 OBJ := $(patsubst %.c,%.o,${SOURCE} arch/x86/isr_wrapper.o)
 
 CC := i386-elf-gcc
+AS := i386-elf-as
 CFLAGS := -ffreestanding -std=c17 -g3 -Og -Wall -Wextra -Wpedantic -Wconversion -Wstrict-prototypes
 LDFLAGS := -ffreestanding -Og -g3 -nostdlib
 
@@ -17,9 +18,9 @@ testos.bin: boot.o ${OBJ}
 	${CC} ${CFLAGS} -c $< -o $@
 
 boot.o: arch/x86/boot.s
-	nasm $< -felf32 -o $@
+	${AS} $< -o $@
 %.o: %.s
-	nasm $< -felf32 -o $@
+	${AS} $< -o $@
 
 run: testos.bin
 	@qemu-system-i386 -no-reboot -m 32 -cdrom testos.iso
