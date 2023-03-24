@@ -1,5 +1,5 @@
-#ifndef PIC_H
-#define PIC_H
+#ifndef _PIC_H
+#define _PIC_H 1
 
 #define PIC_PRIMARY_CMD 0x20
 #define PIC_PRIMARY_DATA 0x21

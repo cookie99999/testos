@@ -1,9 +1,9 @@
-#ifndef VGA_H
-#define VGA_H
+#ifndef _VGA_H
+#define _VGA_H 1
 
 #include <stdint.h>
 
-#define VGA_VRAM 0xb8000
+#define VGA_VRAM (KERNBASE + 0xb8000)
 #define VGA_MAX_COLS 80
 #define VGA_MAX_ROWS 25
 

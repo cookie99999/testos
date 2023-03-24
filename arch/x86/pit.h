@@ -1,5 +1,5 @@
-#ifndef PIT_H
-#define PIT_H
+#ifndef _PIT_H
+#define _PIT_H 1
 
 #define PIT_CHAN_0_DATA 0x40
 #define PIT_CHAN_1_DATA 0x41
